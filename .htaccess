@@ -1,0 +1,18 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Proteger archivos sensibles (EXCEPTO instaladores)
+<FilesMatch "\.(sql|json|log|env|ini)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# PERMITIR EXPLÍCITAMENTE los instaladores
+<FilesMatch "^(installBD\.html|install_db\.php)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+Options -Indexes

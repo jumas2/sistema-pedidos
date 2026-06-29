@@ -1,0 +1,62 @@
+/* Estilos generales */
+body {
+    background: #f4f6f9;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Dashboard cards */
+.card.bg-primary, .card.bg-success, .card.bg-info, .card.bg-warning {
+    transition: transform 0.3s;
+}
+
+.card.bg-primary:hover, 
+.card.bg-success:hover, 
+.card.bg-info:hover, 
+.card.bg-warning:hover {
+    transform: translateY(-5px);
+}
+
+/* Tablas */
+.table th {
+    background: #f8f9fa;
+}
+
+/* Formularios */
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Botones */
+.btn {
+    border-radius: 8px;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 10px;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+}

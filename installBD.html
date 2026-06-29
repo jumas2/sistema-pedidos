@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalador Profesional - Sistema de Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Partículas de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(2px 2px at 20% 30%, #eee, transparent),
+                radial-gradient(2px 2px at 40% 70%, #fff, transparent),
+                radial-gradient(2px 2px at 60% 20%, #eee, transparent),
+                radial-gradient(2px 2px at 80% 80%, #fff, transparent);
+            background-size: 200px 200px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .installer-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 600px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .installer-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .installer-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .installer-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .installer-header .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-size: 36px;
+            color: white;
+            margin-bottom: 16px;
+            position: relative;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .installer-header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 0;
+            position: relative;
+        }
+
+        .installer-header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            margin: 6px 0 0;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .installer-header .badge-version {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: white;
+            margin-top: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        /* Body */
+        .installer-body {
+            padding: 30px;
+        }
+
+        /* Alertas */
+        .alert-custom {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #ffd700;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .alert-custom i {
+            font-size: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .alert-custom strong {
+            color: #fff;
+        }
+
+        /* Formulario */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: #667eea;
+            width: 18px;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control-custom:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-control-custom::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-control-custom:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .help-text {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 11px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Botón principal */
+        .btn-install {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-install::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-install:hover::before {
+            left: 100%;
+        }
+
+        .btn-install:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-install:active {
+            transform: translateY(0);
+        }
+
+        .btn-install:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-install i {
+            font-size: 18px;
+        }
+
+        /* Log de instalación */
+        .log-container {
+            margin-top: 20px;
+            display: none;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .log-header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-header span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .log-header .badge-status {
+            font-size: 10px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffd700;
+        }
+
+        .log-body {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 14px 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .log-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .log-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .log-entry .time {
+            color: rgba(255, 255, 255, 0.3);
+            margin-right: 12px;
+        }
+
+        .log-entry.success { color: #4ade80; }
+        .log-entry.error { color: #f87171; }
+        .log-entry.info { color: #60a5fa; }
+        .log-entry.warning { color: #fbbf24; }
+
+        /* Resultado */
+        .result-box {
+            margin-top: 20px;
+            display: none;
+            border-radius: 12px;
+            padding: 20px 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-box.success {
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .result-box.error {
+            background: rgba(248, 113, 113, 0.12);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .result-box h4 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-box h4 i {
+            font-size: 24px;
+        }
+
+        .result-box.success h4 i { color: #4ade80; }
+        .result-box.error h4 i { color: #f87171; }
+
+        .result-box p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin: 4px 0;
+        }
+
+        .result-box .credentials {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .result-box .credentials code {
+            color: #60a5fa;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .btn-go-dashboard {
+            display: inline-block;
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .btn-go-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
+            color: white;
+        }
+
+        /* Spinner */
+        .spinner-custom {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .installer-header {
+                padding: 30px 20px 24px;
+            }
+            .installer-header h1 {
+                font-size: 22px;
+            }
+            .installer-body {
+                padding: 20px;
+            }
+            .installer-header .icon-wrapper {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="installer-container">
+    <div class="installer-card">
+
+        <!-- Header -->
+        <div class="installer-header">
+            <div class="icon-wrapper">
+                <i class="fas fa-database"></i>
+            </div>
+            <h1>Instalador del Sistema</h1>
+            <p>Sistema de Notas de Pedidos</p>
+            <span class="badge-version"><i class="fas fa-code-branch"></i> v1.0.0</span>
+        </div>
+
+        <!-- Body -->
+        <div class="installer-body">
+
+            <!-- Alerta -->
+            <div class="alert-custom">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <strong>Configuración segura</strong><br>
+                    Este instalador creará la base de datos, tablas y usuario de la aplicación.
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <form id="installForm">
+                <div class="form-group">
+                    <label><i class="fas fa-server"></i> Host MySQL</label>
+                    <input type="text" class="form-control-custom" id="dbHost" value="localhost" required>
+                    <span class="help-text">Generalmente es "localhost"</span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Usuario MySQL</label>
+                    <input type="text" class="form-control-custom" id="dbUser" value="root" required>
+                    <span class="help-text">Usuario con permisos para crear bases de datos</span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Contraseña MySQL</label>
+                    <input type="password" class="form-control-custom" id="dbPass" placeholder="Ingresa tu contraseña" required>
+                    <span class="help-text">Contraseña del usuario root de MySQL</span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-database"></i> Nombre de la Base de Datos</label>
+                    <input type="text" class="form-control-custom" id="dbName" value="pedidos_db" required>
+                    <span class="help-text">Nombre que tendrá la base de datos</span>
+                </div>
+
+                <button type="submit" class="btn-install" id="btnInstall">
+                    <i class="fas fa-play"></i> Iniciar Instalación
+                </button>
+            </form>
+
+            <!-- Log -->
+            <div class="log-container" id="logContainer">
+                <div class="log-header">
+                    <span><i class="fas fa-terminal"></i> Consola de instalación</span>
+                    <span class="badge-status" id="logStatus">⏳ En espera...</span>
+                </div>
+                <div class="log-body" id="logBody"></div>
+            </div>
+
+            <!-- Resultado -->
+            <div class="result-box" id="resultBox"></div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('installForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('btnInstall');
+    const logContainer = document.getElementById('logContainer');
+    const logBody = document.getElementById('logBody');
+    const logStatus = document.getElementById('logStatus');
+    const resultBox = document.getElementById('resultBox');
+
+    // Resetear estado
+    resultBox.style.display = 'none';
+    resultBox.className = 'result-box';
+    logBody.innerHTML = '';
+    logContainer.style.display = 'block';
+
+    // Deshabilitar botón
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-custom"></span> Instalando...';
+    logStatus.textContent = '🔄 Instalando...';
+    logStatus.style.background = 'rgba(96, 165, 250, 0.2)';
+    logStatus.style.color = '#60a5fa';
+
+    // Obtener datos
+    const data = {
+        host: document.getElementById('dbHost').value.trim(),
+        user: document.getElementById('dbUser').value.trim(),
+        pass: document.getElementById('dbPass').value,
+        dbname: document.getElementById('dbName').value.trim()
+    };
+
+    if (!data.pass) {
+        addLog('❌ Ingresa la contraseña de MySQL', 'error');
+        resetButton(btn, logStatus);
+        return;
+    }
+
+    addLog('🚀 Iniciando instalación...', 'info');
+    addLog(`📌 Host: ${data.host}`, 'info');
+    addLog(`📌 Usuario: ${data.user}`, 'info');
+    addLog(`📌 Base de datos: ${data.dbname}`, 'info');
+    addLog('📦 Creando estructura de base de datos...', 'info');
+
+    const sql = `
+CREATE DATABASE IF NOT EXISTS ${data.dbname};
+USE ${data.dbname};
+CREATE USER IF NOT EXISTS 'pedidos_user'@'localhost' IDENTIFIED BY 'Pedidos2026!';
+GRANT ALL PRIVILEGES ON ${data.dbname}.* TO 'pedidos_user'@'localhost';
+FLUSH PRIVILEGES;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    rol ENUM('admin','vendedor','logistica') DEFAULT 'vendedor',
+    activo BOOLEAN DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ruc_dni VARCHAR(20) UNIQUE NOT NULL,
+    direccion_fiscal TEXT,
+    zona VARCHAR(100),
+    telefono VARCHAR(20),
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(50) UNIQUE NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS agencias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    direccion TEXT,
+    telefono VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS vendedores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_pedido VARCHAR(20) UNIQUE NOT NULL,
+    cliente_id INT NOT NULL,
+    vendedor_id INT,
+    usuario_registro_id INT,
+    usuario_atendio_id INT,
+    oc VARCHAR(50),
+    condicion ENUM('Boleta-Contado','Boleta-Crédito','Factura-Contado','Factura-Crédito','Muestra') NOT NULL,
+    fecha_pedido DATE NOT NULL,
+    fecha_entrega DATE,
+    zona VARCHAR(100),
+    agencia_id INT,
+    direccion_envio TEXT,
+    nombre_recibe VARCHAR(100),
+    dni_recibe VARCHAR(20),
+    observacion TEXT,
+    subtotal DECIMAL(10,2) DEFAULT 0,
+    igv DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) DEFAULT 0,
+    estado ENUM('Pendiente','Atendido') DEFAULT 'Pendiente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+    FOREIGN KEY (vendedor_id) REFERENCES vendedores(id),
+    FOREIGN KEY (agencia_id) REFERENCES agencias(id)
+);
+
+CREATE TABLE IF NOT EXISTS detalle_pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pedido_id INT NOT NULL,
+    producto_id INT NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
+    FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+
+INSERT IGNORE INTO usuarios (nombre, email, password, rol) VALUES
+('Administrador', 'admin@empresa.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
+('Vendedor Demo', 'vendedor@empresa.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'vendedor'),
+('Logística Demo', 'logistica@empresa.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'logistica');
+
+INSERT IGNORE INTO agencias (nombre, direccion) VALUES
+('Olva Courier', 'Av. Ejemplo 123, Lima'),
+('Serpost', 'Av. Otro Ejemplo 456, Lima'),
+('Shalom', 'Calle Principal 789, Lima');
+
+INSERT IGNORE INTO vendedores (nombre, email) VALUES
+('Juan Pérez', 'juan@empresa.com'),
+('María Gómez', 'maria@empresa.com'),
+('Carlos López', 'carlos@empresa.com');
+
+INSERT IGNORE INTO clientes (nombre, ruc_dni, direccion_fiscal, zona, telefono) VALUES
+('Empresa ABC SAC', '12345678901', 'Av. Principal 789', 'Miraflores', '999999999'),
+('Comercial XYZ EIRL', '98765432109', 'Calle Secundaria 456', 'Surco', '888888888');
+
+INSERT IGNORE INTO productos (codigo, nombre, precio, stock) VALUES
+('P001', 'Laptop HP Pavilion', 2500.00, 10),
+('P002', 'Monitor Dell 24"', 800.00, 15),
+('P003', 'Teclado Logitech', 120.00, 30);
+`;
+
+    fetch('install_db.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            host: data.host,
+            user: data.user,
+            pass: data.pass,
+            dbname: data.dbname,
+            sql: sql
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            addLog('✅ ' + result.message, 'success');
+            addLog('📋 Tablas: usuarios, clientes, productos, agencias, vendedores, pedidos, detalle_pedidos', 'success');
+            addLog('👤 Usuario creado: admin@empresa.com', 'success');
+            addLog('🔑 Contraseña: admin123', 'success');
+            logStatus.textContent = '✅ Instalación exitosa';
+            logStatus.style.background = 'rgba(74, 222, 128, 0.2)';
+            logStatus.style.color = '#4ade80';
+            showResult(true);
+        } else {
+            addLog('❌ ' + result.message, 'error');
+            logStatus.textContent = '❌ Error';
+            logStatus.style.background = 'rgba(248, 113, 113, 0.2)';
+            logStatus.style.color = '#f87171';
+            showResult(false, result.message);
+        }
+    })
+    .catch(error => {
+        addLog('❌ Error de conexión: ' + error.message, 'error');
+        logStatus.textContent = '❌ Error de conexión';
+        logStatus.style.background = 'rgba(248, 113, 113, 0.2)';
+        logStatus.style.color = '#f87171';
+        showResult(false, 'Error de conexión: ' + error.message);
+    })
+    .finally(() => {
+        resetButton(btn, logStatus);
+    });
+});
+
+// Función para agregar logs
+function addLog(message, type = 'info') {
+    const logBody = document.getElementById('logBody');
+    const timestamp = new Date().toLocaleTimeString();
+    const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.innerHTML = `<span class="time">[${timestamp}]</span> ${icon} ${message}`;
+    logBody.appendChild(entry);
+    logBody.scrollTop = logBody.scrollHeight;
+}
+
+// Función para mostrar resultado
+function showResult(success, errorMsg) {
+    const resultBox = document.getElementById('resultBox');
+    resultBox.style.display = 'block';
+
+    if (success) {
+        resultBox.className = 'result-box success';
+        resultBox.innerHTML = `
+            <h4><i class="fas fa-check-circle"></i> ¡Instalación Exitosa!</h4>
+            <p>El sistema ha sido instalado correctamente.</p>
+            <div class="credentials">
+                <p><strong>👤 Usuario:</strong> <code>admin@empresa.com</code></p>
+                <p><strong>🔑 Contraseña:</strong> <code>admin123</code></p>
+                <p><strong>📋 Rol:</strong> Administrador</p>
+            </div>
+            <a href="dashboard" class="btn-go-dashboard">
+                <i class="fas fa-rocket"></i> Ir al Dashboard
+            </a>
+        `;
+    } else {
+        resultBox.className = 'result-box error';
+        resultBox.innerHTML = `
+            <h4><i class="fas fa-times-circle"></i> Error en la Instalación</h4>
+            <p>${errorMsg || 'Error desconocido'}</p>
+            <p style="margin-top:8px; font-size:13px; color:rgba(255,255,255,0.5);">
+                <i class="fas fa-lightbulb"></i> Verifica tu contraseña de MySQL y que el servicio esté corriendo.
+            </p>
+        `;
+    }
+}
+
+// Función para resetear el botón
+function resetButton(btn, logStatus) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-redo"></i> Reintentar Instalación';
+    if (logStatus.textContent.includes('Error')) {
+        // Mantener estado de error
+    } else if (!logStatus.textContent.includes('exitosa')) {
+        logStatus.textContent = '⏳ Finalizado';
+        logStatus.style.background = 'rgba(255, 255, 255, 0.1)';
+        logStatus.style.color = 'rgba(255, 255, 255, 0.6)';
+    }
+}
+</script>
+
+</body>
+</html>

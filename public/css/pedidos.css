@@ -1,0 +1,479 @@
+/* ============================================
+   PEDIDOS - ESTILOS MODERNOS
+   ============================================ */
+
+/* ============================================
+   HEADER
+   ============================================ */
+.pedidos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-left .page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-left .page-title .title-icon {
+    color: #4f46e5;
+    font-size: 28px;
+}
+
+.header-left .page-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+    font-weight: 400;
+}
+
+.header-right .btn-primary-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.header-right .btn-primary-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.45);
+    color: white;
+    text-decoration: none;
+}
+
+/* ============================================
+   TABLA CONTAINER
+   ============================================ */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+}
+
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: #fafbfc;
+    border-bottom: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.toolbar-left .total-registros {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-wrapper .search-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.search-wrapper .search-input {
+    padding: 10px 16px 10px 42px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: #0f172a;
+    width: 260px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-wrapper .search-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.10);
+    width: 320px;
+}
+
+/* ============================================
+   TABLA MODERNA
+   ============================================ */
+.table-responsive-modern {
+    overflow-x: auto;
+    padding: 0 4px;
+}
+
+.table-modern {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+.table-modern thead th {
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    background: #fafbfc;
+    border-bottom: 1.5px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.table-modern thead th.col-numero { width: 14%; }
+.table-modern thead th.col-cliente { width: 28%; }
+.table-modern thead th.col-fecha { width: 14%; }
+.table-modern thead th.col-total { width: 14%; text-align: right; }
+.table-modern thead th.col-estado { width: 14%; text-align: center; }
+.table-modern thead th.col-acciones { width: 16%; text-align: center; }
+
+.table-modern tbody tr.fila-pedido {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table-modern tbody tr.fila-pedido:hover {
+    background: #f8fafc;
+}
+
+.table-modern tbody td {
+    padding: 12px 18px;
+    vertical-align: middle;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* ============================================
+   COLUMNA NÚMERO
+   ============================================ */
+.numero-pedido {
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.numero-pedido i {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+/* ============================================
+   COLUMNA CLIENTE
+   ============================================ */
+.cliente-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cliente-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4f46e5;
+    text-transform: uppercase;
+}
+
+.cliente-nombre {
+    font-weight: 500;
+    color: #0f172a;
+}
+
+/* ============================================
+   COLUMNA FECHA
+   ============================================ */
+.fecha-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-size: 13px;
+}
+
+.fecha-info i {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* ============================================
+   COLUMNA TOTAL
+   ============================================ */
+.total-monto {
+    font-weight: 700;
+    font-size: 14px;
+    color: #0f172a;
+    display: block;
+    text-align: right;
+}
+
+/* ============================================
+   COLUMNA ESTADO
+   ============================================ */
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+}
+
+.estado-pendiente {
+    background: #fef3c7;
+    color: #d97706;
+}
+.estado-pendiente i { color: #d97706; }
+
+.estado-atendido {
+    background: #d1fae5;
+    color: #16a34a;
+}
+.estado-atendido i { color: #16a34a; }
+
+.estado-anulado {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.estado-anulado i { color: #dc2626; }
+
+.estado-unknown {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+/* ============================================
+   COLUMNA ACCIONES
+   ============================================ */
+.acciones-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-action:hover {
+    text-decoration: none;
+}
+
+.btn-ver:hover {
+    background: #e0f2fe;
+    color: #0891b2;
+}
+
+.btn-editar:hover {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.btn-duplicar:hover {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.btn-eliminar:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+    padding: 60px 20px !important;
+    text-align: center;
+}
+
+.empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.empty-content i {
+    font-size: 48px;
+    color: #cbd5e1;
+}
+
+.empty-content p {
+    font-size: 16px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.btn-empty-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #4f46e5;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-empty-action:hover {
+    background: #4338ca;
+    color: white;
+    text-decoration: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 992px) {
+    .table-modern thead th,
+    .table-modern tbody td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    .search-wrapper .search-input {
+        width: 200px;
+    }
+    .search-wrapper .search-input:focus {
+        width: 240px;
+    }
+    .table-modern thead th.col-numero { width: 16%; }
+    .table-modern thead th.col-cliente { width: 26%; }
+    .table-modern thead th.col-acciones { width: 20%; }
+}
+
+@media (max-width: 768px) {
+    .pedidos-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .header-right .btn-primary-modern {
+        justify-content: center;
+        width: 100%;
+    }
+    .table-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-wrapper .search-input,
+    .search-wrapper .search-input:focus {
+        width: 100%;
+    }
+    .table-modern thead th,
+    .table-modern tbody td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    .cliente-avatar {
+        width: 30px;
+        height: 30px;
+    }
+    .avatar-text {
+        font-size: 11px;
+    }
+    .btn-action {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    .estado-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    .total-monto {
+        font-size: 12px;
+    }
+    .table-modern thead th.col-cliente,
+    .table-modern tbody td.col-cliente {
+        min-width: 130px;
+    }
+    .table-modern thead th.col-acciones,
+    .table-modern tbody td.col-acciones {
+        min-width: 120px;
+    }
+    .numero-pedido {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-left .page-title {
+        font-size: 20px;
+    }
+    .table-modern thead th.col-fecha,
+    .table-modern tbody td.col-fecha {
+        display: none;
+    }
+    .table-modern thead th.col-total,
+    .table-modern tbody td.col-total {
+        display: none;
+    }
+    .table-modern thead th.col-numero { width: 20%; }
+    .table-modern thead th.col-cliente { width: 40%; }
+    .table-modern thead th.col-acciones { width: 28%; }
+}
