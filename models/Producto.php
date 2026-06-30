@@ -148,5 +148,37 @@ class Producto {
         $stmt = $this->db->query("SELECT COUNT(*) as total FROM productos WHERE activo = 1");
         return $stmt->fetch()['total'];
     }
-}
+
+
+    public function updateStock($producto_id, $cantidad) {
+        try {
+            // Verificar stock disponible
+            $stmt = $this->db->prepare("SELECT stock FROM productos WHERE id = :id");
+            $stmt->execute(['id' => $producto_id]);
+            $producto = $stmt->fetch();
+            
+            if (!$producto) {
+                error_log("Producto ID $producto_id no encontrado");
+                return false;
+            }
+            
+            if ($producto['stock'] < $cantidad) {
+                error_log("Stock insuficiente para producto ID $producto_id. Stock: {$producto['stock']}, Requerido: $cantidad");
+                return false;
+            }
+            
+            // Actualizar stock
+            $sql = "UPDATE productos SET stock = stock - :cantidad WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                'id' => $producto_id,
+                'cantidad' => $cantidad
+            ]);
+            
+        } catch (PDOException $e) {
+            error_log("Error en updateStock: " . $e->getMessage());
+            return false;
+        }
+    }
+    }
 ?>

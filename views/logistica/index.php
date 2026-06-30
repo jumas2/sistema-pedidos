@@ -19,102 +19,67 @@
 <!-- TARJETAS DE ESTADÍSTICAS -->
 <!-- ========================================== -->
 <div class="stats-grid">
-    <!-- Total Guías -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica'">
-        <div class="stat-icon blue">
-            <i class="fas fa-file-invoice"></i>
-        </div>
+        <div class="stat-icon blue"><i class="fas fa-file-invoice"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['total'] ?? 0 ?></div>
             <div class="stat-label">Total Guías</div>
         </div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i> <?= $estadisticas['guias_mes'] ?? 0 ?> este mes
-        </div>
+        <div class="stat-trend up">+<?= $estadisticas['guias_mes'] ?? 0 ?> mes</div>
     </div>
 
-    <!-- Pendientes -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica&estado=Pendiente'">
-        <div class="stat-icon yellow">
-            <i class="fas fa-clock"></i>
-        </div>
+        <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['pendientes'] ?? 0 ?></div>
             <div class="stat-label">Pendientes</div>
         </div>
-        <div class="stat-trend down">
-            <i class="fas fa-arrow-down"></i> Pendientes
-        </div>
+        <div class="stat-trend down">⏳</div>
     </div>
 
-    <!-- En Proceso -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica&estado=En%20Proceso'">
-        <div class="stat-icon info">
-            <i class="fas fa-spinner"></i>
-        </div>
+        <div class="stat-icon info"><i class="fas fa-spinner"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['en_proceso'] ?? 0 ?></div>
             <div class="stat-label">En Proceso</div>
         </div>
-        <div class="stat-trend">
-            <i class="fas fa-truck"></i> Tránsito
-        </div>
+        <div class="stat-trend">🚚</div>
     </div>
 
-    <!-- Entregados -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica&estado=Entregado'">
-        <div class="stat-icon green">
-            <i class="fas fa-check-circle"></i>
-        </div>
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['entregados'] ?? 0 ?></div>
             <div class="stat-label">Entregados</div>
         </div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i> <?= $estadisticas['entregados_hoy'] ?? 0 ?> hoy
-        </div>
+        <div class="stat-trend up">+<?= $estadisticas['entregados_hoy'] ?? 0 ?> hoy</div>
     </div>
 
-    <!-- Cancelados -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica&estado=Cancelado'">
-        <div class="stat-icon red">
-            <i class="fas fa-times-circle"></i>
-        </div>
+        <div class="stat-icon red"><i class="fas fa-times-circle"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['cancelados'] ?? 0 ?></div>
             <div class="stat-label">Cancelados</div>
         </div>
-        <div class="stat-trend down">
-            <i class="fas fa-arrow-down"></i> Cancelados
-        </div>
+        <div class="stat-trend down">✖</div>
     </div>
 
-    <!-- Transportistas -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica/transportistas'">
-        <div class="stat-icon purple">
-            <i class="fas fa-users"></i>
-        </div>
+        <div class="stat-icon purple"><i class="fas fa-users"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['transportistas'] ?? 0 ?></div>
             <div class="stat-label">Transportistas</div>
         </div>
-        <div class="stat-trend up">
-            <i class="fas fa-check"></i> Activos
-        </div>
+        <div class="stat-trend up">Activos</div>
     </div>
 
-    <!-- Vehículos Disponibles -->
     <div class="stat-card" onclick="window.location.href='<?= BASE_URL ?>?url=logistica/vehiculos'">
-        <div class="stat-icon success">
-            <i class="fas fa-car"></i>
-        </div>
+        <div class="stat-icon success"><i class="fas fa-car"></i></div>
         <div>
             <div class="stat-number"><?= $estadisticas['vehiculos_disponibles'] ?? 0 ?></div>
-            <div class="stat-label">Vehículos Disponibles</div>
+            <div class="stat-label">Vehículos</div>
         </div>
-        <div class="stat-trend up">
-            <i class="fas fa-check"></i> <?= $estadisticas['vehiculos_en_uso'] ?? 0 ?> en uso
-        </div>
+        <div class="stat-trend up"><?= $estadisticas['vehiculos_en_uso'] ?? 0 ?> uso</div>
     </div>
 </div>
 
@@ -232,7 +197,15 @@
                         <select name="pedido_id" class="form-control" required>
                             <option value="">Seleccionar pedido</option>
                             <?php foreach ($pedidosPendientes as $p): ?>
-                                <option value="<?= $p['id'] ?>"><?= $p['numero_pedido'] ?> - <?= $p['cliente_nombre'] ?></option>
+                                <?php
+                                    $db = Database::getConnection();
+                                    $stmt = $db->prepare("SELECT id FROM guias_remision WHERE pedido_id = :pedido_id");
+                                    $stmt->execute(["pedido_id" => $p["id"]]);
+                                    $tiene_guia = $stmt->fetch();
+                                    if (!$tiene_guia):
+                                ?>
+                                    <option value="<?= $p['id'] ?>"><?= $p['numero_pedido'] ?> - <?= $p['cliente_nombre'] ?></option>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -268,6 +241,8 @@
 </div>
 
 <script>
+var BASE_URL = '<?= BASE_URL ?>';
+
 function crearGuiaDesdePedido(pedidoId, numeroPedido) {
     var modal = new bootstrap.Modal(document.getElementById('modalCrearGuia'));
     modal.show();
@@ -280,59 +255,75 @@ function crearGuiaDesdePedido(pedidoId, numeroPedido) {
         }
     }
     
-    var fecha = new Date();
-    var año = fecha.getFullYear();
-    var mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    var dia = String(fecha.getDate()).padStart(2, '0');
-    var random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    document.querySelector('input[name="numero_guia"]').value = 'G-' + año + mes + dia + '-' + random;
+    var inputGuia = document.querySelector('input[name="numero_guia"]');
+    fetch(BASE_URL + '?url=logistica/generarNumeroGuiaAjax')
+        .then(response => response.json())
+        .then(data => {
+            inputGuia.value = data.numero_guia;
+        })
+        .catch(() => {
+            var fecha = new Date();
+            var año = fecha.getFullYear();
+            var random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            inputGuia.value = 'G-' + año + '-' + random;
+        });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('buscarPedido');
+    var rows = document.querySelectorAll('.fila-pedido');
+    
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            var term = this.value.toLowerCase().trim();
+            rows.forEach(function(row) {
+                var text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+    }
+});
 </script>
 
 <style>
 .form-group { margin-bottom: 15px; }
 .form-group label { font-weight: 600; font-size: 13px; color: #0f172a; display: block; margin-bottom: 4px; }
 
-/* Estilos para las tarjetas de estadísticas */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    gap: 10px;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .stat-card {
     background: white;
-    border-radius: 14px;
-    padding: 10px 12px;
+    border-radius: 10px;
+    padding: 8px 10px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
     position: relative;
+    min-height: 56px;
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-}
-
-.stat-card:active {
-    transform: scale(0.97);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 
 .stat-card .stat-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 12px;
     flex-shrink: 0;
 }
 
@@ -344,74 +335,15 @@ function crearGuiaDesdePedido(pedidoId, numeroPedido) {
 .stat-card .stat-icon.info { background: #e0f2fe; color: #0891b2; }
 .stat-card .stat-icon.success { background: #d1fae5; color: #059669; }
 
-.stat-card .stat-number {
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.1;
-    color: #0f172a;
-}
+.stat-card .stat-number { font-size: 16px; font-weight: 800; line-height: 1.1; color: #0f172a; }
+.stat-card .stat-label { font-size: 9px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+.stat-card .stat-trend { font-size: 8px; font-weight: 600; padding: 1px 6px; border-radius: 12px; margin-left: auto; white-space: nowrap; }
+.stat-card .stat-trend.up { color: #065f46; background: #d1fae5; }
+.stat-card .stat-trend.down { color: #991b1b; background: #fee2e2; }
 
-.stat-card .stat-label {
-    font-size: 11px;
-    color: #64748b;
-    font-weight: 500;
-}
-
-.stat-card .stat-trend {
-    font-size: 9px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin-left: auto;
-    white-space: nowrap;
-}
-
-.stat-card .stat-trend.up {
-    color: #065f46;
-    background: #d1fae5;
-}
-
-.stat-card .stat-trend.down {
-    color: #991b1b;
-    background: #fee2e2;
-}
-
-@media (max-width: 1200px) {
-    .stats-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-    .stat-card {
-        padding: 12px 14px;
-        flex-direction: column;
-        text-align: center;
-        gap: 4px;
-    }
-    .stat-card .stat-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 13px;
-    }
-    .stat-card .stat-number {
-        font-size: 18px;
-    }
-    .stat-card .stat-trend {
-        margin-left: 0;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-}
+@media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } }
+@media (max-width: 480px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 4px; } }
 </style>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

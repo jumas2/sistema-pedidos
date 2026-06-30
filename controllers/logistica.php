@@ -1,5 +1,4 @@
 <?php
-
 // ============================================
 // LOGÍSTICA - DESPACHOS Y VEHÍCULOS
 // ============================================
@@ -16,7 +15,19 @@ function index() {
     $pendientes = $guiaModel->getPendientes();
     $guias = $guiaModel->all();
     $transportistas = $transportistaModel->all();
-    $pedidosPendientes = $pedidoModel->getPendientes();
+    
+    $db = Database::getConnection();
+    $stmt = $db->query("
+        SELECT p.*, c.nombre as cliente_nombre 
+        FROM pedidos p 
+        JOIN clientes c ON p.cliente_id = c.id 
+        WHERE p.estado = 'Pendiente' 
+        AND p.id NOT IN (
+            SELECT pedido_id FROM guias_remision WHERE pedido_id IS NOT NULL
+        )
+        ORDER BY p.fecha_pedido ASC
+    ");
+    $pedidosPendientes = $stmt->fetchAll();
     
     require_once __DIR__ . '/../views/logistica/index.php';
 }
@@ -30,9 +41,22 @@ function crearGuia() {
         return;
     }
     
+    $pedido_id = $_POST['pedido_id'];
+    $db = Database::getConnection();
+    
+    $stmt = $db->prepare("SELECT id FROM guias_remision WHERE pedido_id = :pedido_id");
+    $stmt->execute(['pedido_id' => $pedido_id]);
+    $guia_existente = $stmt->fetch();
+    
+    if ($guia_existente) {
+        setFlash('danger', 'Este pedido ya tiene una guía de remisión asignada.');
+        redirect('?url=logistica');
+        return;
+    }
+    
     $data = [
         'numero_guia' => trim($_POST['numero_guia'] ?? ''),
-        'pedido_id' => $_POST['pedido_id'],
+        'pedido_id' => $pedido_id,
         'transportista_id' => $_POST['transportista_id'] ?: null,
         'fecha_emision' => $_POST['fecha_emision'],
         'direccion_entrega' => trim($_POST['direccion_entrega'] ?? ''),
@@ -41,11 +65,14 @@ function crearGuia() {
     
     $guia = new GuiaRemision();
     if ($guia->create($data)) {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("UPDATE pedidos SET estado_despacho = 'Pendiente' WHERE id = :id");
-        $stmt->execute(['id' => $data['pedido_id']]);
+        $stmt = $db->prepare("UPDATE pedidos SET estado_despacho = 'En Proceso' WHERE id = :id");
+        $stmt->execute(['id' => $pedido_id]);
         
-        setFlash('success', 'Guía de remisión creada correctamente');
+        $guia_id = $db->lastInsertId();
+        $stmt = $db->prepare("UPDATE pedidos SET guia_remision_id = :guia_id WHERE id = :id");
+        $stmt->execute(['guia_id' => $guia_id, 'id' => $pedido_id]);
+        
+        setFlash('success', 'Guía de remisión creada correctamente.');
     } else {
         setFlash('danger', 'Error al crear la guía');
     }
@@ -111,17 +138,23 @@ function misDespachos() {
     verificarRol(['super_admin', 'admin', 'admin_logistica', 'asistente_logistica', 'vendedor', 'conductor']);
     
     $db = Database::getConnection();
-    $stmt = $db->prepare("SELECT id FROM transportistas WHERE usuario_id = :usuario_id AND activo = 1");
-    $stmt->execute(['usuario_id' => $_SESSION['usuario']['id']]);
-    $transportista = $stmt->fetch();
+    $guiaModel = new GuiaRemision();
     
-    if (!$transportista) {
-        setFlash('info', 'No tienes un transportista asignado. Contacta al administrador.');
-        $guiaModel = new GuiaRemision();
+    $roles_admin = ['super_admin', 'admin', 'admin_logistica', 'asistente_logistica'];
+    if (in_array($_SESSION['usuario']['rol'], $roles_admin)) {
         $misGuias = $guiaModel->all();
+        setFlash('info', 'Mostrando todos los despachos (vista de administrador)');
     } else {
-        $guiaModel = new GuiaRemision();
-        $misGuias = $guiaModel->getByTransportista($transportista['id']);
+        $stmt = $db->prepare("SELECT id FROM transportistas WHERE usuario_id = :usuario_id AND activo = 1");
+        $stmt->execute(['usuario_id' => $_SESSION['usuario']['id']]);
+        $transportista = $stmt->fetch();
+        
+        if (!$transportista) {
+            setFlash('warning', 'No tienes un transportista asignado. Contacta al administrador.');
+            $misGuias = [];
+        } else {
+            $misGuias = $guiaModel->getByTransportista($transportista['id']);
+        }
     }
     
     require_once __DIR__ . '/../views/logistica/mis_despachos.php';
@@ -159,13 +192,6 @@ function asignarTransportista() {
 // ============================================
 
 function vehiculos() {
-    $estado = $_GET["estado"] ?? "activos";
-    $vehiculoModel = new Vehiculo();
-    if ($estado === "inactivos") {
-        $vehiculos = $vehiculoModel->allInactivos();
-    } else {
-        $vehiculos = $vehiculoModel->all();
-    }
     verificarSesion();
     verificarRol(['super_admin', 'admin', 'admin_logistica']);
     
@@ -248,25 +274,23 @@ function eliminarVehiculo($id) {
     redirect('?url=logistica/vehiculos');
 }
 
+function reactivarVehiculo($id) {
+    verificarSesion();
+    verificarRol(['super_admin', 'admin', 'admin_logistica']);
+    $vehiculo = new Vehiculo();
+    if ($vehiculo->cambiarEstado($id, 1)) {
+        setFlash('success', 'Vehículo reactivado correctamente');
+    } else {
+        setFlash('danger', 'Error al reactivar vehículo');
+    }
+    redirect('?url=logistica/vehiculos');
+}
+
 // ============================================
 // GESTIÓN DE TRANSPORTISTAS
 // ============================================
 
 function transportistas() {
-    $estado = $_GET["estado"] ?? "activos";
-    $transportistaModel = new Transportista();
-    if ($estado === "inactivos") {
-        $transportistas = $transportistaModel->allInactivos();
-    } else {
-        $transportistas = $transportistaModel->all();
-    }
-    $mostrar = $_GET["mostrar"] ?? "activos";
-    $transportistaModel = new Transportista();
-    if ($mostrar === "inactivos") {
-        $transportistas = $transportistaModel->allInactivos();
-    } else {
-        $transportistas = $transportistaModel->all();
-    }
     verificarSesion();
     verificarRol(['super_admin', 'admin', 'admin_logistica']);
     
@@ -278,9 +302,7 @@ function transportistas() {
     $usuariosLogistica = $usuarioModel->getLogistica();
     $conductores = $usuarioModel->getConductores();
     
-    // Combinar usuarios de logística y conductores
     $usuariosDisponibles = array_merge($usuariosLogistica, $conductores);
-    // Eliminar duplicados por ID
     $usuariosDisponibles = array_unique($usuariosDisponibles, SORT_REGULAR);
     
     require_once __DIR__ . '/../views/logistica/transportistas.php';
@@ -305,7 +327,6 @@ function crearTransportista() {
     $transportista = new Transportista();
     $usuarioModel = new Usuario();
     
-    // Si se seleccionó un usuario, crear transportista desde usuario
     if ($usuario_id) {
         $result = $usuarioModel->crearTransportista($usuario_id);
         if ($result['success']) {
@@ -317,7 +338,6 @@ function crearTransportista() {
         return;
     }
     
-    // Si no se seleccionó usuario, crear transportista normal
     $data = [
         'nombre' => $nombre,
         'apellido' => $apellido,
@@ -586,15 +606,15 @@ function getEstadisticas() {
     
     return $estadisticas;
 }
-function reactivarVehiculo($id) {
+
+// ============================================
+// GENERAR NÚMERO DE GUÍA (AJAX)
+// ============================================
+
+function generarNumeroGuiaAjax() {
     verificarSesion();
-    verificarRol(['super_admin', 'admin', 'admin_logistica']);
-    $vehiculo = new Vehiculo();
-    if ($vehiculo->cambiarEstado($id, 1)) {
-        setFlash('success', 'Vehículo reactivado correctamente');
-    } else {
-        setFlash('danger', 'Error al reactivar vehículo');
-    }
-    redirect('?url=logistica/vehiculos');
+    header('Content-Type: application/json');
+    echo json_encode(['numero_guia' => generarNumeroGuia()]);
+    exit;
 }
 ?>
